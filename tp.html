@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тапалка с таймером</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin-top: 50px;
+    }
+    #tapButton {
+      padding: 20px 40px;
+      font-size: 24px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    #tapButton:disabled {
+      background-color: gray;
+      cursor: not-allowed;
+    }
+    .emoji {
+      font-size: 48px;
+      margin-top: 20px;
+    }
+    #timer {
+      font-size: 24px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Тапалка за 10 секунд</h1>
+<p id="instruction">Подготовься...</p>
+
+<div id="timer">10.0</div>
+
+<button id="tapButton" disabled>Ждать...</button>
+<p>Тапов: <span id="counter">0</span></p>
+<div id="specialEmoji" class="emoji"></div>
+
+<script>
+  let counter = 0;
+  let startTime;
+  let timerInterval;
+  const button = document.getElementById('tapButton');
+  const counterDisplay = document.getElementById('counter');
+  const specialEmoji = document.getElementById('specialEmoji');
+  const instruction = document.getElementById('instruction');
+  const timerDisplay = document.getElementById('timer');
+
+  function startGame() {
+    button.disabled = false;
+    button.textContent = 'Тапай!';
+    counter = 0;
+    counterDisplay.textContent = counter;
+    specialEmoji.textContent = '';
+    instruction.textContent = "Тапай как можно быстрее!";
+    startTime = Date.now();
+
+    // Запускаем таймер
+    timerInterval = setInterval(updateTimer, 100);
+    setTimeout(endGame, 10000); // 10 секунд на игру
+  }
+
+  function updateTimer() {
+    const elapsed = (Date.now() - startTime) / 1000;
+    const remaining = Math.max(0, 10 - elapsed).toFixed(1);
+    timerDisplay.textContent = remaining;
+
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+    }
+  }
+
+  function tap() {
+    counter++;
+    counterDisplay.textContent = counter;
+
+    if (counter === 10) {
+      specialEmoji.textContent = '😀'; // Весёлый смайлик
+    } else if (counter === 20) {
+      specialEmoji.textContent = '😢'; // Грустный смайлик
+    } else if (counter === 30) {
+      specialEmoji.textContent = '⛰️ Много муки!';
+    }
+  }
+
+  function endGame() {
+    button.disabled = true;
+    button.textContent = 'Конец!';
+    instruction.textContent = `Игра окончена! Ты нажал ${counter} раз.`;
+  }
+
+  // Ждём 2 секунды перед стартом игры
+  setTimeout(() => {
+    button.disabled = false;
+    button.textContent = 'Старт!';
+    button.onclick = tap;
+    startGame();
+  }, 2000);
+</script>
+
+</body>
+</html>
